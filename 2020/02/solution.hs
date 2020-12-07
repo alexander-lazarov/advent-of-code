@@ -1,5 +1,4 @@
 import System.IO
--- import Data.Algebra.Boolean
 import Text.Parsec
 import Text.Parsec.String
 
