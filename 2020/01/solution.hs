@@ -1,5 +1,4 @@
 import System.IO
-import qualified Data.Text as T
 
 filename = "input.txt"
 
