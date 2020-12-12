@@ -3,11 +3,8 @@ import qualified Data.Text as T
 
 filename = "input.txt"
 
-strToNum :: String -> Int
-strToNum = read
-
 nums :: [String] -> [Int]
-nums contents = map strToNum contents
+nums contents = map read contents
 
 preambuleLength = 25
 

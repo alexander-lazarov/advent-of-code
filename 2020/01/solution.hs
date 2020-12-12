@@ -2,11 +2,8 @@ import System.IO
 
 filename = "input.txt"
 
-strToNum :: String -> Int
-strToNum = read
-
 nums :: [String] -> [Int]
-nums contents = map strToNum contents
+nums contents = map read contents
 
 solution :: Int -> Int -> [Int] -> Maybe Int
 solution _ _      []     = Nothing
@@ -15,7 +12,6 @@ solution 1 target (x:xs) = if (target == x)
                            else solution 1 target xs
 solution n target (x:xs) = case (solution (n -1) (target - x) xs) of Nothing -> solution n target xs
                                                                      Just a  -> Just (x * a)
-
 
 main = do
   handle <- openFile filename ReadMode
