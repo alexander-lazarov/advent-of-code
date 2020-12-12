@@ -73,9 +73,9 @@ main = do
   contents <- hGetContents handle
 
   putStr "Task 1 result is: "
-  putStr $ (show $ solution_1 $ parseInput $ contents) ++ "\n"
+  putStr $ (show $ solution_1 $ parseInput contents) ++ "\n"
   putStr "Task 2 result is: "
-  putStr $ (show $ solution_2 $ parseInput $ contents) ++ "\n"
+  putStr $ (show $ solution_2 $ parseInput contents) ++ "\n"
 
   hClose handle
 
