@@ -28,11 +28,11 @@ end
 
 puts "Part 1:"
 puts pairs.zip(1..).filter { |pair, num| cmp(*pair) < 0 }.sum { |_, i| i }
+puts ""
 
 packets = [[[2]], [[6]]]
 pairs_2 = (pairs.flatten(1) + packets).sort { |a, b| cmp(a, b) }
 
-puts ""
-puts "Part 1:"
+puts "Part 2:"
 puts packets.map { |p| pairs_2.find_index(p) + 1 }.reduce(&:*)
 
