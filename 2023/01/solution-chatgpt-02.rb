@@ -1,3 +1,4 @@
+# https://chat.openai.com/share/db593917-2a32-49a9-b555-34a22420f4fc
 # Function to replace the first spelled-out digit from the start and end of the line
 def replace_spelled_digits(line)
   spelled_digits = {

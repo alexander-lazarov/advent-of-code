@@ -1,3 +1,4 @@
+# Prompt: https://chat.openai.com/share/db593917-2a32-49a9-b555-34a22420f4fc
 # Function to extract the calibration value from a line
 def extract_calibration_value(line)
   first_digit = line[/\d/]
