@@ -1,123 +1,78 @@
 # INPUT = 'input-sample.txt'
 INPUT = 'input.txt'
 
-halves = File.read(INPUT).split("\n\n")
+$workflows, parts = File.read(INPUT).split("\n\n")
 
-workflows = halves[0].split("\n").map do |line|
-  name, rest = line.split('{')
+$workflows = $workflows.split("\n").map do |line|
+  name, rules = line.scan(/^(\w+)\{(.+)\}$/)[0]
 
-  rest = rest[0..-2].split(',').map do |rule|
-    case rule
-    in 'A' | 'R' then rule
-    in /^([xmas])(\>|\<)(\d+)\:(\w+)$/
-      [Regexp.last_match[1], Regexp.last_match[2], Regexp.last_match[3].to_i, Regexp.last_match[4]]
-    in /^\w+$/ then rule
+  rules = rules.split(',').map do
+    case _1
+    in /^([xmas])(\>|\<)(\d+)\:(\w+)$/ then [$1, $2, $3.to_i, $4]
+    in /^\w+$/ then _1
     end
   end
 
-  [name, rest]
+  [name, rules]
 end.to_h
 
-parts = halves[1].split("\n").map do |line|
-  props = line[1..-2].split(',').map { |p| l, r = p.split('='); [l, r.to_i] }.to_h
+parts = parts.split("\n").map do |line|
+  props = line[1..-2].split(',').map { l, r = _1.split('='); [l, r.to_i] }.to_h
 end
 
-def part_value(part, workflows, workflow_name)
-  workflow = workflows[workflow_name]
-
-  workflow.each do |rule|
-    if rule.is_a?(Array)
+def part_value(part, workflow_name)
+  $workflows[workflow_name].each do |rule|
+    case rule
+    in Array
       prop, op, value, next_workflow = rule
 
-      lval = part[prop]
+      next unless op == '>' ? part[prop] > value : part[prop] < value
 
-      cmp = if op == '>'
-              lval > value
-            elsif op == '<'
-              lval < value
-            else
-              raise "Unknown op #{op}"
-            end
-
-      if cmp
-        case next_workflow
-        in 'A' then return part.sum { |k, v| v }
-        in 'R' then return 0
-        else return part_value(part, workflows, next_workflow)
-        end
-      else
-        next
+      case next_workflow
+      in 'A' then return part.values.sum
+      in 'R' then return 0
+      else return part_value(part, next_workflow)
       end
-    else
-      if rule == 'A'
-        return part.sum { |k, v| v }
-      elsif rule == 'R'
-        return 0
-      else
-        return part_value(part, workflows, rule)
-      end
+    in 'A' then return part.values.sum
+    in 'R' then return 0
+    else return part_value(part, rule)
     end
   end
 end
 
-pp parts.sum { |part| part_value(part, workflows, 'in') }
+p parts.sum { |part| part_value(part, 'in') }
 
-terminated = []
-
-queue = [
-  [{
-    'x' => (1..4000),
-    'm' => (1..4000),
-    'a' => (1..4000),
-    's' => (1..4000),
-  }, 'in']
-]
+e = []
+queue = [[{'x' => (1..4000), 'm' => (1..4000), 'a' => (1..4000), 's' => (1..4000),}, 'in']]
 
 until queue.empty?
-  current = queue.shift
+  part, workflow_name = queue.shift
 
-  part, workflow_name = current
-
-  workflow = workflows[workflow_name]
-
-  workflow.each do |rule|
-    if rule.is_a?(Array)
+  $workflows[workflow_name].each do |rule|
+    case rule
+    in Array
       prop, op, value, next_workflow = rule
+      t, f = part.dup, part.dup
 
-      true_part = part.dup
-      false_part = part.dup
-
-      if op == '>'
-        true_part[prop] = (value + 1)..part[prop].end
-        false_part[prop] = part[prop].begin..value
-      elsif op == '<'
-        true_part[prop] = part[prop].begin..(value - 1)
-        false_part[prop] = value..part[prop].end
-      else
-        raise "Unknown op #{op}"
+      case op
+      in '>'
+        t[prop] = (value + 1)..part[prop].end
+        f[prop] = part[prop].begin..value
+      in '<'
+        t[prop] = part[prop].begin..(value - 1)
+        f[prop] = value..part[prop].end
       end
 
-      if false_part[prop].begin <= false_part[prop].end
-        part = false_part
-      else
-        break
+      case next_workflow
+      in 'A'| 'R' then e << [t, next_workflow]
+      else queue << [t, next_workflow]
       end
 
-      if true_part[prop].begin <= true_part[prop].end
-        if next_workflow == 'A' || next_workflow == 'R'
-          terminated << [true_part, next_workflow]
-        else
-          queue << [true_part, next_workflow]
-        end
-      end
-    else
-      if rule == 'A' || rule == 'R'
-        terminated << [part, rule]
-      else
-        queue << [part, rule]
-      end
+      part = f
+    in 'A' | 'R' then e << [part, rule]
+    else queue << [part, rule]
     end
   end
 end
 
-p terminated.select { |part, workflow_name| workflow_name == 'A' }.map { |part, _| part.values.map(&:size).reduce(:*) }.sum
+p e.select { _2 == 'A' }.map { _1[0].values.map(&:size).reduce(:*) }.sum
