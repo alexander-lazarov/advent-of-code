@@ -34,9 +34,14 @@ def word_at(x, y, dir, length)
 end
 
 def diagonal_letters_at(x, y)
-  ([x, y-1], [x, y + 1], [x - 1, y], [x + 1, y]).map do |new_x, new_y|
+  [
+    [x - 1, y - 1],
+    [x + 1, y + 1],
+    [x - 1, y + 1],
+    [x + 1, y - 1]
+  ].map do |new_x, new_y|
     $grid.dig(new_x, new_y)
-  end.sort
+  end.compact
 end
 
 puts ((0...$grid.size).map do |x|
@@ -45,13 +50,22 @@ puts ((0...$grid.size).map do |x|
   end
 end).flatten.count('XMAS')
 
-puts ((0...$grid.size).map do |x|
-  (0...$grid[0].size).map do |y|
+count = 0
+((1...($grid.size - 1)).each do |x|
+  (1...($grid[0].size - 1)).each do |y|
+    next unless $grid[x][y] == 'A'
 
+    letters = diagonal_letters_at(x, y)
+
+    diagonal_letters_at(x, y)
+    first = letters[0..1].sort.join
+    second = letters[2..3].sort.join
+
+    count += 1 if first == 'MS' && second == 'MS'
   end
-end).flatten.count('XMAS')
+end)
 
-
+puts count
 
 # rubocop:enable Naming/MethodParameterName
 # rubocop:enable Style/ParallelAssignment
