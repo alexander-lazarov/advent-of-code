@@ -30,7 +30,7 @@ def make_correct(order)
   false
 end
 
-puts (orders.select { correct_order?(_1) }).sum { middle_of(_1) }
-puts (orders.reject { correct_order?(_1) }).sum { middle_of(make_correct(_1)) }
+puts orders.select { correct_order?(_1) }.sum { middle_of(_1) }
+puts orders.reject { correct_order?(_1) }.sum { middle_of(make_correct(_1)) }
 
 # rubocop:enable Style/GlobalVars
