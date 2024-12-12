@@ -13,21 +13,10 @@ input.map { |line| line.strip.chars }.each_with_index do |row, i|
   end
 end
 
-def sides(letters)
-  vertical_sides(letters) + horizontal_sides(letters)
-end
-
-def vertical_sides(letters)
-  left_sides(letters) + right_sides(letters)
-end
-
-def horizontal_sides(letters)
-  vertical_sides(letters.map(&:reverse))
-end
-
-def right_sides(letters)
-  left_sides(letters.map { |i, j| [i, -j] })
-end
+def sides(letters) = vertical_sides(letters) + horizontal_sides(letters)
+def vertical_sides(letters) = left_sides(letters) + right_sides(letters)
+def horizontal_sides(letters) = vertical_sides(letters.map(&:reverse))
+def right_sides(letters) = left_sides(letters.map { |i, j| [i, -j] })
 
 def left_sides(letters)
   result = 0
