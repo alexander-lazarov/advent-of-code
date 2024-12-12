@@ -91,15 +91,12 @@ def partition(letters)
   result
 end
 
-def perimeter(letter)
-  (letter.sum do |i, j|
-    4 - [
-      [i - 1, j],
-      [i + 1, j],
-      [i, j - 1],
-      [i, j + 1]
-    ].count { letter.include?(_1) }
-  end)
+def perimeter(letters)
+  letters.sum do |i, j|
+    [
+      [i - 1, j], [i + 1, j], [i, j - 1], [i, j + 1]
+    ].count { !letters.include?(_1) }
+  end
 end
 
 regions = letters.values.flat_map { partition(_1) }
