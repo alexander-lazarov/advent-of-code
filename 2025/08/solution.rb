@@ -5,15 +5,13 @@ circuits = junctions.map { [it] }
 
 junctions.
   combination(2).
-  map { |j1, j2| [j1.zip(j2).map { (_1 - _2) ** 2 }.reduce(:+), j1, j2] }.
-  sort_by { it[0] }.
-  each.with_index do |(_, j1, j2), i|
+  sort_by { |j1, j2| j1.zip(j2).map { (_1 - _2) ** 2 }.reduce(:+) }.
+  each.with_index do |(j1, j2), i|
     c1 = circuits.find { it.include?(j1) }
     c2 = circuits.find { it.include?(j2) }
 
     if c1 != c2
-      circuits.delete(c1)
-      circuits.delete(c2)
+      circuits -= [c1, c2]
       circuits.push(c1 + c2)
     end
 
