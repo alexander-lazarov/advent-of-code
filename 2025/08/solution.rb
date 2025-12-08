@@ -13,7 +13,7 @@ distances.each.with_index do |(_, j1, j2), i|
   c1 = circuits.find { it.include?(j1) }
   c2 = circuits.find { it.include?(j2) }
 
-  p circuits.map { it.size }.sort.reverse.take(3).reduce(:*) if i == rounds - 1
+  p circuits.map { it.size }.sort.last(3).reduce(:*) if i == rounds - 1
   next if c1 == c2
 
   circuits.delete(c1)
